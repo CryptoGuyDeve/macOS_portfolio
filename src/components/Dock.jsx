@@ -3,8 +3,11 @@ import { useGSAP } from "@gsap/react";
 import React, { useRef } from "react";
 import { Tooltip } from "react-tooltip";
 import gsap from "gsap";
+import useWindowStore from "#store/window";
 
-const Dock = () => { // <--- This is the correct component definition
+const Dock = () => {
+  // <--- This is the correct component definition
+  const { openWindow, closeWindow, windows } = useWindowStore();
   const dockRef = useRef(null);
 
   // Removed the duplicate 'const Dock = () => { ... }' definition
@@ -53,18 +56,32 @@ const Dock = () => { // <--- This is the correct component definition
       );
 
     // Added event listeners
-    dock.addEventListener('mousemove', handleMouseMove)
-    dock.addEventListener('mouseleave', resetIcons)
+    dock.addEventListener("mousemove", handleMouseMove);
+    dock.addEventListener("mouseleave", resetIcons);
 
     // Cleanup function needs to be returned properly from useGSAP
     return () => {
       dock.removeEventListener("mousemove", handleMouseMove);
       dock.removeEventListener("mouseleave", resetIcons);
-    }
+    };
   }, []); // <--- useGSAP dependencies array closed correctly
 
   const toggleApp = (app) => {
-    //Todo implement open window logic
+    if (!app.canOpen) return;
+
+    const window = windows[app.id];
+
+    if (!window) {
+      console.error(`Window not found for app: ${app.id}`);
+      return;
+    }
+    if (window.isOpen) {
+      closeWindow(app.id);
+    } else {
+      openWindow(app.id);
+    }
+
+    console.log(windows);
   };
 
   return (
