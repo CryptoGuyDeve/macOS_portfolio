@@ -25,4 +25,7 @@ export default defineConfig({
       ),
     },
   },
+  server: {
+    allowedHosts: ["sociologically-palaeobotanic-jarrod.ngrok-free.dev"],
+  },
 });
